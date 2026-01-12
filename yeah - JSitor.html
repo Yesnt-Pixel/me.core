@@ -1,0 +1,951 @@
+<!doctype html><html><head></head><body><!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>AboutMe Network — Breakcore Edition</title>
+
+	<!-- Fonts -->
+	<link
+		href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rubik:wght@300;500;700&display=swap"
+		rel="stylesheet">
+
+	<style>
+		:root {
+			--bg: #04040a;
+			--bg-2: #0b0b12;
+			--card: #0f0f16;
+			--muted: #9aa0b2;
+			--text: #e6e7ee;
+			--neon-pink: #ff006e;
+			--neon-cyan: #00f5ff;
+			--danger: #ff3366;
+			--warn: #ffaa00;
+			--glow: 0 8px 40px rgba(255, 0, 110, 0.12);
+		}
+
+		/* Reset / base */
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0
+		}
+
+		html,
+		body {
+			height: 100%
+		}
+
+		body {
+			font-family: Rubik, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+			background: radial-gradient(1200px 600px at 10% 20%, rgba(255, 0, 110, 0.03), transparent),
+				radial-gradient(1000px 400px at 90% 80%, rgba(0, 245, 255, 0.02), transparent),
+				linear-gradient(180deg, var(--bg), var(--bg-2));
+			color: var(--text);
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			min-height: 100vh;
+			padding: 22px;
+			position: relative;
+			overflow-x: hidden;
+		}
+
+		/* scanlines & noise for breakcore vibe */
+		body::after {
+			content: "";
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			top: 0;
+			background-image:
+				linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+			background-size: 100% 3px;
+			pointer-events: none;
+			mix-blend-mode: overlay;
+			z-index: 0;
+			opacity: 0.6;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			position: relative;
+			z-index: 2
+		}
+
+		/* Navbar */
+		.navbar {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			padding: 12px 16px;
+			border-radius: 10px;
+			background: linear-gradient(90deg, rgba(255, 0, 110, 0.04), rgba(0, 245, 255, 0.02));
+			border: 1px solid rgba(255, 255, 255, 0.03);
+			box-shadow: var(--glow);
+			position: sticky;
+			top: 12px;
+			backdrop-filter: blur(6px);
+		}
+
+		.brand {
+			display: flex;
+			gap: 12px;
+			align-items: center;
+			font-weight: 700;
+			font-size: 18px;
+			font-family: Orbitron, monospace;
+			letter-spacing: 0.6px;
+			color: var(--text);
+			text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+		}
+
+		.brand .sig {
+			background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+			-webkit-background-clip: text;
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
+			filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
+		}
+
+		.nav-actions {
+			display: flex;
+			gap: 8px
+		}
+
+		button,
+		input,
+		textarea,
+		select {
+			font-family: inherit;
+			border-radius: 8px;
+			border: 1px solid rgba(255, 255, 255, 0.04);
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(0, 0, 0, 0.06));
+			color: var(--text);
+			padding: 10px 12px;
+			font-size: 13px;
+		}
+
+		button {
+			cursor: pointer;
+			font-weight: 600;
+			letter-spacing: 0.3px
+		}
+
+		.btn-primary {
+			background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan));
+			color: #06060a;
+			border: none;
+			padding: 10px 14px;
+			box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7), 0 0 28px rgba(255, 0, 110, 0.07);
+		}
+
+		.btn-ghost {
+			background: transparent;
+			border: 1px solid rgba(255, 255, 255, 0.03);
+			color: var(--muted)
+		}
+
+		/* Cards */
+		.card {
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(0, 0, 0, 0.06));
+			border: 1px solid rgba(255, 255, 255, 0.03);
+			border-radius: 12px;
+			padding: 18px;
+			margin: 18px 0;
+			box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+			position: relative;
+			overflow: hidden;
+		}
+
+		.card.huge {
+			padding: 28px
+		}
+
+		/* user grid */
+		#people {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+			gap: 14px
+		}
+
+		.userCard {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 8px;
+			padding: 14px;
+			border-radius: 10px;
+			transition: transform .18s ease, box-shadow .18s ease;
+			cursor: pointer;
+			transform-origin: center;
+			background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+		}
+
+		.userCard:hover {
+			transform: translateY(-6px) rotate(-0.5deg);
+			box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7)
+		}
+
+		.userCard img {
+			width: 84px;
+			height: 84px;
+			border-radius: 50%;
+			object-fit: cover;
+			border: 3px solid rgba(255, 255, 255, 0.04)
+		}
+
+		.userCard p {
+			font-weight: 700;
+			color: var(--text);
+			font-size: 14px
+		}
+
+		/* profile header */
+		.profile-header {
+			position: relative;
+			margin-bottom: 14px;
+			overflow: visible
+		}
+
+		.profile-banner {
+			width: 100%;
+			height: 220px;
+			border-radius: 10px;
+			object-fit: cover;
+			filter: contrast(.9) saturate(.95)
+		}
+
+		.profile-info {
+			display: flex;
+			gap: 18px;
+			align-items: flex-end;
+			margin-top: -56px;
+			padding: 0 18px
+		}
+
+		.profile-avatar {
+			width: 120px;
+			height: 120px;
+			border-radius: 50%;
+			border: 4px solid var(--card);
+			object-fit: cover;
+			transform: rotate(-0.8deg)
+		}
+
+		.profile-details h2 {
+			font-size: 28px;
+			font-weight: 800;
+			margin-bottom: 6px;
+			font-family: Orbitron, monospace
+		}
+
+		.profile-details p {
+			color: var(--muted);
+			font-size: 14px
+		}
+
+		/* edit area */
+		.edit-grid {
+			display: grid;
+			grid-template-columns: 1fr 360px;
+			gap: 12px
+		}
+
+		@media (max-width:900px) {
+			.edit-grid {
+				grid-template-columns: 1fr
+			}
+		}
+
+		/* post card */
+		.posts-grid {
+			display: grid;
+			gap: 12px
+		}
+
+		.post-card {
+			padding: 14px;
+			border-radius: 8px;
+			border: 1px solid rgba(255, 255, 255, 0.03)
+		}
+
+		.post-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 10px
+		}
+
+		.post-header h4 {
+			font-size: 16px;
+			margin-bottom: 6px
+		}
+
+		.post-time {
+			color: var(--muted);
+			font-size: 12px
+		}
+
+		/* file upload */
+		.file-upload {
+			position: relative
+		}
+
+		.file-upload label {
+			display: block;
+			padding: 12px;
+			border-radius: 8px;
+			border: 2px dashed rgba(255, 255, 255, 0.03);
+			cursor: pointer;
+			text-align: center
+		}
+
+		.size-warning {
+			font-size: 12px;
+			color: var(--muted);
+			margin-top: 6px
+		}
+
+		.size-error {
+			font-size: 12px;
+			color: var(--danger);
+			margin-top: 6px
+		}
+
+		.size-ok {
+			font-size: 12px;
+			color: var(--neon-cyan);
+			margin-top: 6px
+		}
+
+		/* music player */
+		.music-player {
+			position: fixed;
+			right: 18px;
+			bottom: 18px;
+			padding: 12px 14px;
+			border-radius: 10px;
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.08));
+			border: 1px solid rgba(255, 255, 255, 0.03);
+			display: flex;
+			gap: 8px;
+			align-items: center
+		}
+
+		/* glitchy headings */
+		.glitch {
+			position: relative;
+			display: inline-block;
+			color: var(--text);
+			font-weight: 800;
+		}
+
+		.glitch::before,
+		.glitch::after {
+			content: attr(data-text);
+			position: absolute;
+			left: 0;
+			top: 0;
+			mix-blend-mode: screen;
+			color: var(--neon-pink);
+			opacity: .8;
+			clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+			transform: translate(-2px, -1px);
+			filter: blur(0.6px);
+		}
+
+		.glitch::after {
+			color: var(--neon-cyan);
+			mix-blend-mode: overlay;
+			transform: translate(2px, 1px);
+			opacity: .6;
+			clip-path: polygon(0 30%, 100% 0, 100% 100%, 0 100%)
+		}
+
+		/* tiny human-made imperfections */
+		.handwritten {
+			transform: rotate(-0.6deg);
+			box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6);
+		}
+
+		/* toast */
+		.toast {
+			position: fixed;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 26px;
+			background: rgba(12, 12, 18, 0.92);
+			padding: 12px 16px;
+			border-radius: 8px;
+			border: 1px solid rgba(255, 255, 255, 0.03);
+			z-index: 9999;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+			font-weight: 600;
+			color: var(--text)
+		}
+
+		/* small */
+		.muted {
+			color: var(--muted);
+			font-size: 13px
+		}
+
+		.hidden {
+			display: none !important
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="navbar">
+			<div class="brand"><span class="sig">AboutMe</span><span class="muted">— breakcore</span></div>
+			<div class="nav-actions">
+				<button class="btn-ghost" id="btnExplore">Explore</button>
+				<button class="btn-ghost" id="btnProfile">My Profile</button>
+				<button class="btn-ghost" id="btnLogout">Logout</button>
+			</div>
+		</div>
+
+		<!-- AUTH -->
+		<div id="auth" class="card huge handwritten" style="max-width:760px;margin:28px auto;">
+			<h3 class="glitch" data-text="Welcome">Welcome</h3>
+			<p class="muted" style="margin-top:8px">Create an account or log in to own your profile page.</p>
+
+			<div style="display:flex;gap:10px;margin-top:14px">
+				<input id="email" placeholder="Email" type="email" />
+				<input id="pass" placeholder="Password" type="password" />
+				<select id="authMode" style="width:160px">
+          <option value="signup">Sign Up</option>
+          <option value="login">Login</option>
+        </select>
+				<button id="authButton" class="btn-primary">Go</button>
+			</div>
+		</div>
+
+		<!-- EXPLORE -->
+		<div id="explore" class="hidden">
+			<div class="card">
+				<h2 class="glitch" data-text="Discover People">Discover People</h2>
+				<div style="display:flex;gap:10px;margin-top:12px;">
+					<input id="searchPeople" placeholder="Search people..." />
+					<button id="refreshPeople" class="btn-ghost">Refresh</button>
+				</div>
+
+				<div id="people" style="margin-top:18px"></div>
+			</div>
+		</div>
+
+		<!-- PROFILE -->
+		<div id="profile" class="hidden">
+			<div class="card">
+				<div class="profile-header">
+					<img id="banner" class="profile-banner" src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200" alt="banner">
+					<div class="profile-info">
+						<img id="pfp" class="profile-avatar" src="https://via.placeholder.com/120" alt="avatar">
+						<div class="profile-details">
+							<h2 id="name">New User</h2>
+							<p id="bio">No bio yet</p>
+							<div style="margin-top:8px;display:flex;gap:8px">
+								<a id="shareLink" class="btn-ghost" href="#">Copy Link</a>
+								<span id="storageInfo" class="muted" style="align-self:center">—</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card edit-grid">
+				<div>
+					<h3>Edit / Posts</h3>
+
+					<div id="editProfile">
+						<input id="nameInput" placeholder="Your Name" />
+						<textarea id="bioInput" placeholder="Tell us about yourself..." style="margin-top:8px"></textarea>
+
+						<div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+							<div style="flex:1;min-width:220px">
+								<div class="file-upload">
+									<input id="pfpFile" type="file" accept="image/*" hidden />
+									<label for="pfpFile">Choose Profile Picture</label>
+									<div id="pfpSize" class="size-warning">Max: 3 MB</div>
+								</div>
+							</div>
+
+							<div style="flex:1;min-width:220px">
+								<div class="file-upload">
+									<input id="bannerFile" type="file" accept="image/*" hidden />
+									<label for="bannerFile">Choose Banner Image</label>
+									<div id="bannerSize" class="size-warning">Max: 6 MB</div>
+								</div>
+							</div>
+
+							<div style="flex:1;min-width:220px">
+								<div class="file-upload">
+									<input id="musicFile" type="file" accept="audio/*" hidden />
+									<label for="musicFile">Choose Profile Music</label>
+									<div id="musicSize" class="size-warning">Max: 8 MB</div>
+								</div>
+							</div>
+						</div>
+
+						<div style="margin-top:12px;display:flex;gap:10px">
+							<button id="saveProfile" class="btn-primary">Save Profile</button>
+							<button id="previewProfile" class="btn-ghost">Preview</button>
+						</div>
+					</div>
+				</div>
+
+				<div>
+					<h3>New Post</h3>
+					<input id="postTitle" placeholder="Post title" />
+					<textarea id="postText" placeholder="What's on your mind?" style="margin-top:8px"></textarea>
+					<div style="display:flex;gap:8px;margin-top:8px">
+						<select id="postType" style="min-width:120px">
+              <option value="text">Text</option>
+              <option value="image">Image</option>
+              <option value="video">Video</option>
+            </select>
+						<div style="flex:1">
+							<div class="file-upload">
+								<input id="postFile" type="file" hidden />
+								<label for="postFile" id="postFileLabel">Attach file (optional)</label>
+								<div id="postFileSize" class="size-warning">Max image: 5 MB / Max video: 50 MB</div>
+							</div>
+						</div>
+					</div>
+					<div style="margin-top:10px;display:flex;gap:8px">
+						<button id="createPost" class="btn-primary">Post</button>
+						<button id="clearPost" class="btn-ghost">Clear</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="posts" class="posts-grid"></div>
+		</div>
+
+	</div>
+
+	<div id="musicPlayer" class="music-player hidden">
+		<span id="musicLabel">Playing...</span>
+		<button id="toggleMusic" class="btn-ghost">Pause</button>
+	</div>
+
+	<audio id="music" loop></audio>
+
+	<!-- Firebase (compat) -->
+	<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+	<script>
+		// CONFIG (your config retained)
+    firebase.initializeApp({
+      apiKey: "AIzaSyB_6cF1-Pd-Tr1VP80LEcWwfryLi1E_kw0",
+      authDomain: "alejandro-core-65c48.firebaseapp.com",
+      projectId: "alejandro-core",
+      messagingSenderId: "484726897136",
+      appId: "1:484726897136:web:a22a8246cbbe3e793ec535"
+    });
+
+    // Services
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    // Limits (tunable)
+    const MAX_IMAGE_SIZE = 3 * 1024 * 1024;   // profile images: 3MB
+    const MAX_BANNER_SIZE = 6 * 1024 * 1024;  // banners: 6MB
+    const MAX_AUDIO_SIZE = 8 * 1024 * 1024;   // music: 8MB
+    const MAX_POST_IMAGE = 5 * 1024 * 1024;   // post images: 5MB
+    const MAX_POST_VIDEO = 50 * 1024 * 1024;  // post videos: 50MB
+
+    // State
+    let currentUID = null;
+    let viewingUID = new URLSearchParams(location.search).get("user");
+    let allUsers = [];
+
+    // Short util
+    function qs(id){return document.getElementById(id)}
+    function formatBytes(bytes){
+      if(bytes===0) return "0 Bytes";
+      const k=1024; const sizes=['Bytes','KB','MB','GB'];
+      const i=Math.floor(Math.log(bytes)/Math.log(k));
+      return (Math.round((bytes/Math.pow(k,i))*100)/100) + " " + sizes[i];
+    }
+
+    // Toast
+    function showToast(msg, timeout=3000){
+      const t = document.createElement('div');
+      t.className='toast'; t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(()=> t.remove(), timeout);
+    }
+
+    // File check helper (returns boolean)
+    function checkFileSizeAndReport(file, maxSize, el){
+      if(!file){ el.textContent = `No file selected`; el.className='size-warning'; return true; }
+      const s = file.size;
+      if(s > maxSize){
+        el.textContent = `❌ ${formatBytes(s)} — max ${formatBytes(maxSize)}`;
+        el.className = 'size-error';
+        return false;
+      } else {
+        el.textContent = `✓ ${formatBytes(s)}`;
+        el.className = 'size-ok';
+        return true;
+      }
+    }
+
+    // Convert file to base64 but only if under maxSize
+    function fileToBase64IfOk(file, maxSize){
+      return new Promise((res, rej) => {
+        if(!file) return res(null);
+        if(file.size > maxSize) return rej(new Error('file too large'));
+        const reader = new FileReader();
+        reader.onload = e => res(e.target.result);
+        reader.onerror = () => rej(new Error('read error'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // DOM hookup
+    document.addEventListener('DOMContentLoaded', () => {
+      // Auth controls
+      qs('authButton').addEventListener('click', handleAuth);
+      qs('btnExplore').addEventListener('click', showExplore);
+      qs('btnProfile').addEventListener('click', showMyProfile);
+      qs('refreshPeople').addEventListener('click', loadPeople);
+      qs('btnLogout').addEventListener('click', logout);
+
+      // Profile buttons
+      qs('saveProfile').addEventListener('click', saveProfile);
+      qs('previewProfile').addEventListener('click', () => {
+        if(currentUID) { location.search = '?user=' + currentUID; } else showToast('Log in first');
+      });
+
+      // Posts
+      qs('createPost').addEventListener('click', createPost);
+      qs('clearPost').addEventListener('click', clearPostForm);
+
+      // File inputs - show size feedback
+      qs('pfpFile').addEventListener('change', e => {
+        const f = e.target.files[0]; checkFileSizeAndReport(f, MAX_IMAGE_SIZE, qs('pfpSize'));
+      });
+      qs('bannerFile').addEventListener('change', e => {
+        const f = e.target.files[0]; checkFileSizeAndReport(f, MAX_BANNER_SIZE, qs('bannerSize'));
+      });
+      qs('musicFile').addEventListener('change', e => {
+        const f = e.target.files[0]; checkFileSizeAndReport(f, MAX_AUDIO_SIZE, qs('musicSize'));
+      });
+      qs('postFile').addEventListener('change', e => {
+        const f = e.target.files[0];
+        const type = qs('postType').value;
+        const max = (type === 'video') ? MAX_POST_VIDEO : MAX_POST_IMAGE;
+        checkFileSizeAndReport(f, max, qs('postFileSize'));
+      });
+
+      // toggle post accept based on type
+      qs('postType').addEventListener('change', () => {
+        const t = qs('postType').value;
+        const file = qs('postFile');
+        file.value = '';
+        file.accept = (t === 'image') ? 'image/*' : (t === 'video' ? 'video/*' : '');
+        qs('postFileSize').textContent = (t === 'video') ? 'Max video: 50 MB' : 'Max image: 5 MB';
+        qs('postFileSize').className = 'size-warning';
+      });
+
+      // Search
+      qs('searchPeople').addEventListener('input', filterPeople);
+
+      // Small UI state
+      if(viewingUID) { showProfileFor(viewingUID); } else { showExplore(); }
+
+      // track auth
+      auth.onAuthStateChanged(u => {
+        currentUID = u?.uid || null;
+        if(currentUID) {
+          qs('auth').classList.add('hidden');
+          qs('navbar')?.classList; // keep nav visible via CSS; we've always shown it
+          if(!viewingUID) showExplore();
+        } else {
+          qs('auth').classList.remove('hidden');
+          qs('explore')?.classList.add('hidden');
+          qs('profile')?.classList.add('hidden');
+        }
+      });
+    });
+
+    /* ----------------------
+       Authentication
+       ---------------------- */
+    function handleAuth(){
+      const mode = qs('authMode').value;
+      if(mode === 'signup') signup();
+      else login();
+    }
+
+    function signup(){
+      const email = qs('email').value.trim();
+      const pass = qs('pass').value;
+      if(!email || !pass){ showToast('Email and password required'); return; }
+      auth.createUserWithEmailAndPassword(email, pass)
+        .then(c => {
+          const uid = c.user.uid;
+          const base = {
+            name: "New User",
+            bio: "Hello! I'm new here 👋",
+            pfp: "https://via.placeholder.com/120",
+            banner: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200",
+            music: "",
+            storageUsage: 0 // bytes (optional tracking)
+          };
+          return db.ref("profiles/" + uid).set(base)
+            .then(()=> { showToast("Account created"); location.search = '?user=' + uid; });
+        })
+        .catch(err => showToast('Error: ' + err.message));
+    }
+
+    function login(){
+      const email = qs('email').value.trim();
+      const pass = qs('pass').value;
+      if(!email || !pass){ showToast('Email and password required'); return; }
+      auth.signInWithEmailAndPassword(email, pass)
+        .then(()=> showToast('Welcome back!'))
+        .catch(err => showToast('Error: ' + err.message));
+    }
+
+    function logout(){
+      auth.signOut().then(()=> {
+        location.search = ''; showToast('Logged out');
+      });
+    }
+
+    /* ----------------------
+       People & Profiles
+       ---------------------- */
+    function loadPeople(){
+      const peopleDiv = qs('people');
+      peopleDiv.innerHTML = '<div class="muted">Loading…</div>';
+      db.ref('profiles').once('value').then(s=>{
+        peopleDiv.innerHTML = '';
+        allUsers = [];
+        s.forEach(u=>{
+          const d = u.val(); allUsers.push({uid:u.key,data:d}); renderUser(u.key,d);
+        });
+      }).catch(err => {
+        peopleDiv.innerHTML = '<div class="muted">Failed to load</div>';
+        showToast('Error loading people');
+      });
+    }
+
+    function renderUser(uid, d){
+      const peopleDiv = qs('people');
+      const div = document.createElement('div');
+      div.className = 'userCard card';
+      div.innerHTML = `<img src="${d.pfp || 'https://via.placeholder.com/120'}" alt="${(d.name||'user')}"><p>${(d.name||'Unnamed')}</p>`;
+      div.onclick = ()=> location.search = '?user=' + uid;
+      peopleDiv.appendChild(div);
+    }
+
+    function filterPeople(){
+      const q = qs('searchPeople').value.toLowerCase();
+      qs('people').innerHTML = '';
+      allUsers.filter(u => (u.data.name||'').toLowerCase().includes(q)).forEach(u => renderUser(u.uid, u.data));
+    }
+
+    function showExplore(){ qs('explore').classList.remove('hidden'); qs('profile').classList.add('hidden'); loadPeople(); }
+    function showMyProfile(){ if(currentUID) location.search = '?user=' + currentUID; else showToast('Log in to view your profile'); }
+
+    function showProfileFor(uid){
+      viewingUID = uid;
+      location.search = '?user=' + uid;
+      loadProfile(uid);
+    }
+
+    function loadProfile(uid){
+      qs('explore').classList.add('hidden'); qs('profile').classList.remove('hidden');
+      db.ref('profiles/' + uid).on('value', s=>{
+        const d = s.val(); if(!d) return;
+        qs('banner').src = d.banner || 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200';
+        qs('pfp').src = d.pfp || 'https://via.placeholder.com/120';
+        qs('name').innerText = d.name || 'New User';
+        qs('bio').innerText = d.bio || '';
+        const link = location.origin + location.pathname + '?user=' + uid;
+        qs('shareLink').href = link;
+        qs('shareLink').onclick = e => { e.preventDefault(); navigator.clipboard.writeText(link); showToast('Link copied'); };
+        // music
+        if(d.music){
+          qs('music').src = d.music;
+          qs('music').play().catch(()=>{});
+          qs('musicPlayer').classList.remove('hidden');
+          qs('musicLabel').innerText = 'Playing profile music';
+        } else {
+          qs('music').pause();
+          qs('musicPlayer').classList.add('hidden');
+        }
+        // local edit fields if owner
+        if(uid === currentUID){
+          qs('editProfile').classList.remove('hidden');
+        } else {
+          qs('editProfile').classList.add('hidden');
+        }
+
+        // storage info if present
+        if(d.storageUsage) qs('storageInfo').innerText = `Stored: ${formatBytes(d.storageUsage)}`;
+        else qs('storageInfo').innerText = 'Stored: —';
+      });
+
+      loadPosts(uid);
+    }
+
+    /* ----------------------
+       Profile save (uploads base64 into DB)
+       ---------------------- */
+    async function saveProfile(){
+      if(!currentUID){ showToast('Log in first'); return; }
+
+      const name = qs('nameInput').value.trim() || 'New User';
+      const bio = qs('bioInput').value.trim() || '';
+
+      // selected files
+      const pfpFile = qs('pfpFile').files[0];
+      const bannerFile = qs('bannerFile').files[0];
+      const musicFile = qs('musicFile').files[0];
+
+      // quick checks
+      if(pfpFile && !checkFileSizeAndReport(pfpFile, MAX_IMAGE_SIZE, qs('pfpSize'))) return;
+      if(bannerFile && !checkFileSizeAndReport(bannerFile, MAX_BANNER_SIZE, qs('bannerSize'))) return;
+      if(musicFile && !checkFileSizeAndReport(musicFile, MAX_AUDIO_SIZE, qs('musicSize'))) return;
+
+      showToast('Saving profile…');
+
+      try{
+        const updates = { name, bio };
+        // convert files to base64 if present
+        let addedStorage = 0;
+
+        if(pfpFile){
+          const b = await fileToBase64IfOk(pfpFile, MAX_IMAGE_SIZE);
+          updates.pfp = b;
+          addedStorage += pfpFile.size;
+        }
+        if(bannerFile){
+          const b = await fileToBase64IfOk(bannerFile, MAX_BANNER_SIZE);
+          updates.banner = b;
+          addedStorage += bannerFile.size;
+        }
+        if(musicFile){
+          const b = await fileToBase64IfOk(musicFile, MAX_AUDIO_SIZE);
+          updates.music = b;
+          addedStorage += musicFile.size;
+        }
+
+        // update profile meta and increment storageUsage (best-effort)
+        const snapshot = await db.ref('profiles/' + currentUID).once('value');
+        const prev = snapshot.val() || {};
+        const prevStorage = Number(prev.storageUsage || 0);
+        updates.storageUsage = prevStorage + addedStorage;
+
+        await db.ref('profiles/' + currentUID).update(updates);
+        showToast('Profile saved');
+        // reload profile view
+        location.search = '?user=' + currentUID;
+      } catch(err){
+        showToast('Save failed: ' + err.message);
+      }
+    }
+
+    /* ----------------------
+       Posts
+       ---------------------- */
+    function clearPostForm(){
+      qs('postTitle').value=''; qs('postText').value=''; qs('postType').value='text'; qs('postFile').value=''; qs('postFileSize').textContent = 'Max image: 5 MB / Max video: 50 MB';
+    }
+
+    function createPost(){
+      if(!currentUID){ showToast('Log in first'); return; }
+      const title = qs('postTitle').value.trim();
+      if(!title){ showToast('Add a title'); return; }
+      const text = qs('postText').value.trim();
+      const type = qs('postType').value;
+      const file = qs('postFile').files[0];
+
+      // file checks
+      if(file){
+        const max = (type === 'video') ? MAX_POST_VIDEO : MAX_POST_IMAGE;
+        if(!checkFileSizeAndReport(file, max, qs('postFileSize'))) return;
+      }
+
+      const key = db.ref('posts/' + currentUID).push().key;
+      const post = { title, text, type, time: Date.now() };
+
+      if(file && type !== 'text'){
+        const max = (type === 'video') ? MAX_POST_VIDEO : MAX_POST_IMAGE;
+        fileToBase64IfOk(file, max).then(b => {
+          post.media = b;
+          db.ref('posts/' + currentUID + '/' + key).set(post).then(()=> {
+            clearPostForm(); showToast('Post created');
+          }).catch(e=>showToast('Post failed'));
+        }).catch(e => showToast('File too big or read error'));
+      } else {
+        db.ref('posts/' + currentUID + '/' + key).set(post).then(()=> {
+          clearPostForm(); showToast('Post created');
+        }).catch(e=>showToast('Post failed'));
+      }
+    }
+
+    function loadPosts(uid){
+      const postsDiv = qs('posts');
+      postsDiv.innerHTML = '<div class="muted">Loading posts…</div>';
+      db.ref('posts/' + uid).on('value', s=>{
+        postsDiv.innerHTML = '';
+        const postsArray = [];
+        s.forEach(p => postsArray.push({ key: p.key, data: p.val() }));
+        postsArray.sort((a,b)=> b.data.time - a.data.time);
+        postsArray.forEach(({key,data:d})=>{
+          const c = document.createElement('div'); c.className = 'post-card card';
+          let html = `<div class="post-header"><div><h4>${escapeHtml(d.title)}</h4><div class="post-time">${new Date(d.time).toLocaleString()}</div></div>`;
+          if(d && d.type && d.type === 'video') html += `</div>`;
+          else html += `</div>`;
+          html += (d.text? `<p style="margin-top:8px">${escapeHtml(d.text)}</p>` : '');
+          if(d.media){
+            html += `<div class="post-media" style="margin-top:10px">`;
+            if(d.type === 'video') html += `<video src="${d.media}" controls style="width:100%" onplay="document.getElementById('music').pause()"></video>`;
+            else if(d.type === 'image') html += `<img src="${d.media}" style="width:100%;border-radius:8px" />`;
+            html += `</div>`;
+          }
+          if(uid === currentUID) html += `<div style="margin-top:10px"><button class="btn-ghost" onclick="deletePost('${uid}','${key}')">Delete</button></div>`;
+          c.innerHTML = html;
+          postsDiv.appendChild(c);
+        });
+      });
+    }
+
+    function deletePost(uid,key){
+      if(!confirm('Delete this post?')) return;
+      db.ref('posts/' + uid + '/' + key).remove().then(()=> showToast('Deleted'));
+    }
+
+    // music control
+    qs('toggleMusic').addEventListener('click', () => {
+      const m = qs('music');
+      if(m.paused){ m.play().catch(()=>{}); qs('toggleMusic').textContent = 'Pause'; }
+      else { m.pause(); qs('toggleMusic').textContent = 'Play'; }
+    });
+
+    // small helpers
+    function escapeHtml(str){
+      if(!str) return '';
+      return str.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s]);
+    }
+
+    // Small UX: wire the hidden file inputs to labels clicking
+    // (labels already use for= so browser handles it)
+	</script>
+</body>
+
+</html></body><html>
